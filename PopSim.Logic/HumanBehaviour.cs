@@ -17,7 +17,7 @@ namespace PopSim.Logic
             Energy = MaxEnergy;
         }
 
-        protected const double MaxEnergy = 10;
+        protected const double MaxEnergy = 20;
         protected double Energy { get; set; }
 
         public Random RandomNumberGenerator { get; set; }
@@ -29,7 +29,7 @@ namespace PopSim.Logic
             var magnitude = simObject.Velocity.VectorMagnitude();
             if (magnitude > Speed)
             {
-                Energy -= elapsedMilliseconds / 1000.0;
+                Energy -= magnitude * elapsedMilliseconds / 1000.0;
             }
         }
 

@@ -10,7 +10,8 @@ namespace PopSim.Logic
     public class ZombieBehaviour : HumanBehaviour
     {
 
-        public ZombieBehaviour(Random random):base(random)
+        public ZombieBehaviour(Random random)
+            : base(random)
         {
         }
 
@@ -24,13 +25,14 @@ namespace PopSim.Logic
 
         protected override void OnAttached(SimObject simObject)
         {
-            GiveRandomDirection(simObject,Speed);
+            GiveRandomDirection(simObject, Speed);
             simObject.Color = Colors.Red;
         }
 
         protected override void OnSimObjectUpdating(SimObject zombie, GameState gameState, long elapsedMilliseconds)
         {
-            base.OnSimObjectUpdating(zombie, gameState, elapsedMilliseconds);
+            var magnitude = zombie.Velocity.VectorMagnitude();
+            Energy -= magnitude * elapsedMilliseconds / 1000.0;
 
             if (Prey != null && (!CanBeVictim(Prey) || zombie.Location.GetDistance(Prey.Location) > ChaseDistance))
             {
@@ -39,7 +41,7 @@ namespace PopSim.Logic
                     Prey.Color = Colors.Black;
                 }
                 Prey = null;
-                GiveRandomDirection(zombie,Speed);
+                GiveRandomDirection(zombie, Speed);
             }
             if (Prey == null)
             {
@@ -56,10 +58,15 @@ namespace PopSim.Logic
                 Prey.Color = Colors.Green;
                 zombie.Velocity = zombie.Location.GetDirection(Prey.Location).ScalarMultiply(HuntingSpeed);
             }
-            if (Energy < 3)
+            if (Energy < 15)
             {
-                zombie.Velocity = new Vector2(0,0);
+                zombie.Velocity = zombie.Velocity.UnitVector().ScalarMultiply(SlowSpeed);
                 zombie.Color = Colors.Indigo;
+            }
+            else if (Energy <= 0)
+            {
+                zombie.Velocity = new Vector2(0, 0);
+                zombie.Color = Colors.Black;
             }
             else
             {
@@ -83,7 +90,7 @@ namespace PopSim.Logic
                         collidingObject.Behaviours.Remove(behaviour);
                         collidingObject.Behaviours.Add(new ZombieBehaviour(Random));
                         Prey = null;
-                        Energy = Math.Max(Energy + 4, MaxEnergy);
+                        Energy = Math.Max(Energy + 10, MaxEnergy);
                     }
                 }
             }
