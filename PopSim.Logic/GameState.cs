@@ -25,7 +25,6 @@ namespace PopSim.Logic
 
         public IEnumerable<SimObject> DetectCollisions(SimObject collidingObject)
         {
-            var collidingObjects = new List<SimObject>();
             foreach (var simObject in SimObjects)
             {
                 if (collidingObject != simObject && _collisionDetection.IsCollision(collidingObject, simObject))
