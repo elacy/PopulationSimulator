@@ -11,6 +11,12 @@ namespace PopSim.Logic
 
             IsZero = Math.Abs(x) < double.Epsilon && Math.Abs(y) < double.Epsilon;
         }
+        public Vector2(double theta)
+        {
+            X = Math.Cos(theta); 
+            Y = Math.Sin(theta);
+            
+        }
 
         public bool IsZero { get; private set; }
 
