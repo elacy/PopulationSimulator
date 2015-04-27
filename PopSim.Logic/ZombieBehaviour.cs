@@ -16,20 +16,22 @@ namespace PopSim.Logic
 
         private SimObject Prey { get; set; }
 
-        const double Speed = 0.4;
+        const double SlowSpeed = 0.1;
+        const double Speed = 0.3;
 
-        const double HuntingSpeed = 1;
+        const double HuntingSpeed = 0.7;
         private const double ChaseDistance = 50;
 
         protected override void OnAttached(SimObject simObject)
         {
-            GiveRandomDirection((Actor)simObject,Speed);
+            GiveRandomDirection(simObject,Speed);
             simObject.Color = Colors.Red;
         }
 
-        protected override void OnSimObjectUpdating(SimObject simObject, GameState gameState, long elapsedMilliseconds)
+        protected override void OnSimObjectUpdating(SimObject zombie, GameState gameState, long elapsedMilliseconds)
         {
-            var zombie = (Actor) simObject;
+            base.OnSimObjectUpdating(zombie, gameState, elapsedMilliseconds);
+
             if (Prey != null && (!CanBeVictim(Prey) || zombie.Location.GetDistance(Prey.Location) > ChaseDistance))
             {
                 if (CanBeVictim(Prey))
@@ -54,14 +56,21 @@ namespace PopSim.Logic
                 Prey.Color = Colors.Green;
                 zombie.Velocity = zombie.Location.GetDirection(Prey.Location).ScalarMultiply(HuntingSpeed);
             }
+            if (Energy < 3)
+            {
+                zombie.Velocity = new Vector2(0,0);
+                zombie.Color = Colors.Indigo;
+            }
+            else
+            {
+                zombie.Color = Colors.Red;
+            }
         }
 
         private static bool CanBeVictim(SimObject simObject)
         {
             return simObject.Behaviours.Any(x => !(x is ZombieBehaviour));
         }
-
-
 
         protected override void OnSimObjectCollision(SimObject sender, GameState gameState, long elapsedMilliseconds, List<SimObject> collidingObjects)
         {
@@ -74,10 +83,11 @@ namespace PopSim.Logic
                         collidingObject.Behaviours.Remove(behaviour);
                         collidingObject.Behaviours.Add(new ZombieBehaviour(Random));
                         Prey = null;
-                        GiveRandomDirection((Actor)sender,Speed);
+                        Energy = Math.Max(Energy + 4, MaxEnergy);
                     }
                 }
             }
+            GiveRandomDirection((Actor)sender, Speed);
         }
     }
 }

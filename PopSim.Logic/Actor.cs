@@ -17,12 +17,5 @@ namespace PopSim.Logic
         {
             get { return true; }
         }
-
-        public Vector2 Velocity { get; set; }
-
-        protected override void OnUpdate(GameState gameState, long elapsedMilliseconds)
-        {
-            TryMove(gameState, elapsedMilliseconds, Location.Add(Velocity));
-        }
     }
 }

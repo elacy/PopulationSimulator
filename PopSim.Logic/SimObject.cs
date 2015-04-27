@@ -21,6 +21,7 @@ namespace PopSim.Logic
         {
             Behaviours = new ObservableCollection<Behaviour>();
             Behaviours.CollectionChanged += OnBehavioursCollectionChanged;
+            Velocity = new Vector2(0,0);
         }
 
         #region Behaviours
@@ -89,6 +90,8 @@ namespace PopSim.Logic
         #endregion
 
 
+        public Vector2 Velocity { get; set; }
+
         public ObservableCollection<Behaviour> Behaviours { get; private set; } 
 
         public abstract bool CanHaveCollisions { get;}
@@ -106,10 +109,14 @@ namespace PopSim.Logic
         {
             Updating.Raise(this, new GameStateUpdateEventArgs(gameState, elapsedMilliseconds));
             OnUpdate(gameState, elapsedMilliseconds);
+            TryMove(gameState, elapsedMilliseconds, Location.Add(Velocity));
         }
 
 
-        protected abstract void OnUpdate(GameState gameState, long elapsedMilliseconds);
+        protected virtual void OnUpdate(GameState gameState, long elapsedMilliseconds)
+        {
+            
+        }
 
         protected void TryMove(GameState gameState, long elapsedMilliseconds, Vector2 newLocation)
         {

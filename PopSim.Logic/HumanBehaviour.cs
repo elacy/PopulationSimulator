@@ -14,11 +14,24 @@ namespace PopSim.Logic
         public HumanBehaviour(Random random)
         {
             Random = random;
+            Energy = MaxEnergy;
         }
+
+        protected const double MaxEnergy = 10;
+        protected double Energy { get; set; }
 
         public Random RandomNumberGenerator { get; set; }
 
         const double Speed = 0.3;
+
+        protected override void OnSimObjectUpdating(SimObject simObject, GameState gameState, long elapsedMilliseconds)
+        {
+            var magnitude = simObject.Velocity.VectorMagnitude();
+            if (magnitude > Speed)
+            {
+                Energy -= elapsedMilliseconds / 1000.0;
+            }
+        }
 
         protected override void OnAttached(SimObject simObject)
         {
@@ -26,7 +39,7 @@ namespace PopSim.Logic
             GiveRandomDirection(actor,Speed);
         }
         
-        protected void GiveRandomDirection(Actor actor, double speed)
+        protected void GiveRandomDirection(SimObject actor, double speed)
         {
             var angle = Math.PI*2*Random.NextDouble();
             var velocity = new Vector2(angle);
@@ -35,7 +48,7 @@ namespace PopSim.Logic
 
         protected override void OnSimObjectCollision(SimObject sender, GameState gameState, long elapsedMilliseconds, List<SimObject> collidingObjects)
         {
-            GiveRandomDirection((Actor)sender, Speed);
+            GiveRandomDirection(sender, Speed);
         }
     }
 }
