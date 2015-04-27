@@ -3,31 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace PopSim.Logic
 {
     public class HumanBehaviour:Behaviour
     {
-        private readonly Random _random;
+        protected readonly Random Random;
 
         public HumanBehaviour(Random random)
         {
-            _random = random;
+            Random = random;
         }
 
         public Random RandomNumberGenerator { get; set; }
 
         const double Speed = 0.3;
-        protected override void OnSimObjectUpdating(SimObject simObject, GameState gameState, long elapsedMilliseconds)
+
+        protected override void OnAttached(SimObject simObject)
         {
             var actor = (Actor)simObject;
-            if(Math.Abs(Math.Abs(actor.Velocity.X) - Speed) > double.Epsilon || Math.Abs(Math.Abs(actor.Velocity.Y) - Speed) > double.Epsilon)
-            {
-                GiveRandomDirection(actor);
-            }
+            GiveRandomDirection(actor);
         }
-
-        private void GiveRandomDirection(Actor actor)
+        
+        protected void GiveRandomDirection(Actor actor)
         {
             double x = Speed, y = Speed;
             if (RandomBool())
@@ -43,7 +42,7 @@ namespace PopSim.Logic
 
         private bool RandomBool()
         {
-            return _random.Next(1, 1000) % 2 == 0;
+            return Random.Next(1, 1000) % 2 == 0;
         }
 
         protected override void OnSimObjectCollision(SimObject sender, GameState gameState, long elapsedMilliseconds, List<SimObject> collidingObjects)

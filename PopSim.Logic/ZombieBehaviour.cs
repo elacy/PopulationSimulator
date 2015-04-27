@@ -7,13 +7,11 @@ using System.Windows.Media;
 
 namespace PopSim.Logic
 {
-    public class ZombieBehaviour : Behaviour
+    public class ZombieBehaviour : HumanBehaviour
     {
-        private readonly Random _random;
 
-        public ZombieBehaviour(Random random)
+        public ZombieBehaviour(Random random):base(random)
         {
-            _random = random;
         }
 
         private SimObject Prey { get; set; }
@@ -60,27 +58,10 @@ namespace PopSim.Logic
 
         private static bool CanBeVictim(SimObject simObject)
         {
-            return simObject.Behaviours.Any(x => x is HumanBehaviour);
+            return simObject.Behaviours.Any(x => !(x is ZombieBehaviour));
         }
 
-        private void GiveRandomDirection(Actor actor)
-        {
-            double x = Speed, y = Speed;
-            if (RandomBool())
-            {
-                x = -x;
-            }
-            if (RandomBool())
-            {
-                y = -y;
-            }
-            actor.Velocity = new Vector2(x, y);
-        }
 
-        private bool RandomBool()
-        {
-            return _random.Next(1, 1000) % 2 == 0;
-        }
 
         protected override void OnSimObjectCollision(SimObject sender, GameState gameState, long elapsedMilliseconds, List<SimObject> collidingObjects)
         {
@@ -88,10 +69,10 @@ namespace PopSim.Logic
             {
                 foreach (var behaviour in collidingObject.Behaviours.ToList())
                 {
-                    if (behaviour is HumanBehaviour)
+                    if (!(behaviour is ZombieBehaviour))
                     {
                         collidingObject.Behaviours.Remove(behaviour);
-                        collidingObject.Behaviours.Add(new ZombieBehaviour(_random));
+                        collidingObject.Behaviours.Add(new ZombieBehaviour(Random));
                         Prey = null;
                         GiveRandomDirection((Actor)sender);
                     }

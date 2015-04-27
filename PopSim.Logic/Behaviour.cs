@@ -32,7 +32,10 @@ namespace PopSim.Logic
             OnSimObjectUpdating((SimObject)sender, e.GameState, e.ElapsedMilliseconds);
         }
 
-        protected abstract void OnSimObjectUpdating(SimObject simObject, GameState gameState, long elapsedMilliseconds);
+        protected virtual void OnSimObjectUpdating(SimObject simObject, GameState gameState, long elapsedMilliseconds)
+        {
+            
+        }
 
         public void Detach(SimObject simObject)
         {
