@@ -23,7 +23,7 @@ namespace PopSim.Logic
 
         protected override void OnAttached(SimObject simObject)
         {
-            GiveRandomDirection((Actor)simObject);
+            GiveRandomDirection((Actor)simObject,Speed);
             simObject.Color = Colors.Red;
         }
 
@@ -37,7 +37,7 @@ namespace PopSim.Logic
                     Prey.Color = Colors.Black;
                 }
                 Prey = null;
-                GiveRandomDirection(zombie);
+                GiveRandomDirection(zombie,Speed);
             }
             if (Prey == null)
             {
@@ -74,7 +74,7 @@ namespace PopSim.Logic
                         collidingObject.Behaviours.Remove(behaviour);
                         collidingObject.Behaviours.Add(new ZombieBehaviour(Random));
                         Prey = null;
-                        GiveRandomDirection((Actor)sender);
+                        GiveRandomDirection((Actor)sender,Speed);
                     }
                 }
             }
