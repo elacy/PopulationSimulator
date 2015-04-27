@@ -8,7 +8,14 @@ namespace PopSim.Logic
         {
             simObject.Updating += SimObjectOnUpdating;
             simObject.Collision += SimObjectOnCollision;
+            OnAttached(simObject);
         }
+
+        protected virtual void OnAttached(SimObject simObject)
+        {
+            
+        }
+
 
         private void SimObjectOnCollision(object sender, GameCollisionEventArgs e)
         {

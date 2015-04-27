@@ -9,7 +9,7 @@ namespace PopSim.Logic
         {
             Size = new Size2(5,5);
             Location = initialLocation;
-            Color = Colors.Green;
+            Color = Colors.Blue;
             Velocity = new Vector2(0, 0);
         }
 

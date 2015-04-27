@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace PopSim.Logic
 {
-    public class RandomMoveBehaviour:Behaviour
+    public class HumanBehaviour:Behaviour
     {
         private readonly Random _random;
 
-        public RandomMoveBehaviour(Random random)
+        public HumanBehaviour(Random random)
         {
             _random = random;
         }
 
         public Random RandomNumberGenerator { get; set; }
 
-        const double Speed = 0.2;
+        const double Speed = 0.3;
         protected override void OnSimObjectUpdating(SimObject simObject, GameState gameState, long elapsedMilliseconds)
         {
             var actor = (Actor)simObject;

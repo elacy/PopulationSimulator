@@ -54,7 +54,14 @@ namespace PopSim.Logic
                     var initialLocation = new Vector2(_random.NextDouble(10, Width), _random.NextDouble(WallSize, Height - WallSize));
                     actor = new Actor(initialLocation);
                 } while (DetectCollisions(actor).Any());
-                actor.Behaviours.Add(new RandomMoveBehaviour(_random));
+                if (i == 0)
+                {
+                    actor.Behaviours.Add(new ZombieBehaviour(_random));
+                }
+                else
+                {
+                    actor.Behaviours.Add(new HumanBehaviour(_random));
+                }
                 SimObjects.Add(actor);
             }
         }

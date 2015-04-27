@@ -46,7 +46,8 @@
     <Compile Include="GameStateUpdateEventArgs.cs" />
     <Compile Include="Behaviour.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="RandomMoveBehaviour.cs" />
+    <Compile Include="ZombieBehaviour.cs" />
+    <Compile Include="HumanBehaviour.cs" />
     <Compile Include="SimObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Size2.cs" />
