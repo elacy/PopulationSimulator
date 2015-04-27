@@ -54,7 +54,7 @@ namespace PopSim.Logic
             if (Prey != null)
             {
                 Prey.Color = Colors.Green;
-                zombie.Velocity = zombie.Location.GetVelocity(Prey.Location).ScalarMultiply(HuntingSpeed);
+                zombie.Velocity = zombie.Location.GetDirection(Prey.Location).ScalarMultiply(HuntingSpeed);
             }
         }
 
