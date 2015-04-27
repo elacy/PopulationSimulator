@@ -18,9 +18,9 @@ namespace PopSim.Logic
 
         private SimObject Prey { get; set; }
 
-        const double Speed = 0.2;
+        const double Speed = 0.4;
 
-        const double HuntingSpeed = 0.5;
+        const double HuntingSpeed = 1;
         private const double ChaseDistance = 50;
 
         protected override void OnAttached(SimObject simObject)
