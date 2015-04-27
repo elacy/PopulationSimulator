@@ -40,15 +40,16 @@ namespace PopSim.Logic
         public Vector2 GetDirection(Vector2 destination)
         {
             var angle = AngleBetween(destination);
-            return new Vector2(Math.Cos(angle),Math.Sin(angle));
+            RetVector = new Vector2(Math.Cos(angle),Math.Sin(angle));
+            RetVector = RetVector.UnitVector();
+            return RetVector;
 
         }
         
         public Vector2 ScalarMultiply(double multiplier)
         {
-            RetVector = new Vector2(X*multiplier,Y*multiplier);
-            RetVector = RetVector.UnitVector();
-            return RetVector;
+            return new Vector2(X*multiplier,Y*multiplier);
+        
         }
         
         public double VectorMagnitude()
