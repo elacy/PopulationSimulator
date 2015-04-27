@@ -46,7 +46,9 @@ namespace PopSim.Logic
         
         public Vector2 ScalarMultiply(double multiplier)
         {
-            return new Vector2(X*multiplier,Y*multiplier);
+            RetVector = new Vector2(X*multiplier,Y*multiplier);
+            RetVector = RetVector.UnitVector();
+            return RetVector;
         }
         
         public double VectorMagnitude()
