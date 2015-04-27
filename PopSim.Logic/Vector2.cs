@@ -37,7 +37,7 @@ namespace PopSim.Logic
             return Math.Atan2(vector2.Y - Y, vector2.X - X);
         }
 
-        public Vector2 GetVelocity(Vector2 destination)
+        public Vector2 GetDirection(Vector2 destination)
         {
             var angle = AngleBetween(destination);
             return new Vector2(Math.Cos(angle),Math.Sin(angle));
@@ -52,6 +52,11 @@ namespace PopSim.Logic
         public double VectorMagnitude()
         {
             return Math.Sqrt(X*X + Y*Y);
+        }
+        
+        public Vector2 UnitVector()
+        {
+            return new Vector2( X / VectorMagnitude(), Y / VectorMagnitude())
         }
     }
 }
