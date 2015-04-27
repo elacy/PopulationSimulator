@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PopSim.Presentation", "PopSim.Presentation\PopSim.Presentation.csproj", "{1B3965CD-B7FF-4794-9511-A61A84D7588F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PopSim.Logic", "PopSim.Logic\PopSim.Logic.csproj", "{93CBE835-0A37-4553-B9DA-8980504905CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PopSim.Wpf", "PopSim.Wpf\PopSim.Wpf.csproj", "{33B4FF33-5766-4C37-9C9C-C21616E7644B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1B3965CD-B7FF-4794-9511-A61A84D7588F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B3965CD-B7FF-4794-9511-A61A84D7588F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B3965CD-B7FF-4794-9511-A61A84D7588F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B3965CD-B7FF-4794-9511-A61A84D7588F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93CBE835-0A37-4553-B9DA-8980504905CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93CBE835-0A37-4553-B9DA-8980504905CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93CBE835-0A37-4553-B9DA-8980504905CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93CBE835-0A37-4553-B9DA-8980504905CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33B4FF33-5766-4C37-9C9C-C21616E7644B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33B4FF33-5766-4C37-9C9C-C21616E7644B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33B4FF33-5766-4C37-9C9C-C21616E7644B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33B4FF33-5766-4C37-9C9C-C21616E7644B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

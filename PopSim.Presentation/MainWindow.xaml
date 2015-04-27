@@ -1,0 +1,54 @@
+﻿<Window x:Class="PopSim.Presentation.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:logic="clr-namespace:PopSim.Logic;assembly=PopSim.Logic"
+        xmlns:wpf="clr-namespace:PopSim.Wpf;assembly=PopSim.Wpf"
+        mc:Ignorable="d"
+        Title="MainWindow" SizeToContent="WidthAndHeight" d:DataContext="{d:DesignInstance logic:GameState}">
+    <Grid>
+        <Grid.Resources>
+            <DataTemplate x:Key="ActorTemplate" DataType="logic:Actor">
+                <Ellipse Height="{Binding Size.Height, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="{Binding Size.Width, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <Ellipse.Fill>
+                        <SolidColorBrush Color="{Binding Color, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Ellipse.Fill>
+                    <Ellipse.Stroke>
+                        <SolidColorBrush Color="{Binding Color, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Ellipse.Stroke>
+                </Ellipse>
+            </DataTemplate>
+            <DataTemplate x:Key="WallTemplate" DataType="logic:WallObject">
+                <Rectangle Height="{Binding Size.Height, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="{Binding Size.Width, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <Rectangle.Fill>
+                        <SolidColorBrush Color="{Binding Color, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Rectangle.Fill>
+                    <Rectangle.Stroke>
+                        <SolidColorBrush Color="{Binding Color, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Rectangle.Stroke>
+                </Rectangle>
+            </DataTemplate>
+            <wpf:TypeBasedDataTemplateSelector x:Key="TemplateSelector">
+                <wpf:TypeBasedDataTemplateSelector.TypeDataTemplateMapItemItems>
+                    <wpf:TypeDataTemplateMapItem Type="{x:Type logic:Actor}" DataTemplate="{StaticResource ActorTemplate}"/>
+                    <wpf:TypeDataTemplateMapItem Type="{x:Type logic:WallObject}" DataTemplate="{StaticResource WallTemplate}"/>
+                </wpf:TypeBasedDataTemplateSelector.TypeDataTemplateMapItemItems>
+            </wpf:TypeBasedDataTemplateSelector>
+        </Grid.Resources>
+
+        <ItemsControl ItemsSource="{Binding SimObjects}" ItemTemplateSelector="{StaticResource TemplateSelector}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas Width="{Binding Width, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Height="{Binding Height, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="Canvas.Left" Value="{Binding Location.X, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Setter Property="Canvas.Top" Value="{Binding Location.Y, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+        </ItemsControl>
+    </Grid>
+</Window>
