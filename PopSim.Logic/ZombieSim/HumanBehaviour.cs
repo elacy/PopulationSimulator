@@ -11,12 +11,9 @@ namespace PopSim.Logic.ZombieSim
         public HumanBehaviour(Random random)
         {
             Random = random;
-            Energy = MaxEnergy;
         }
 
         protected const double ViewDistance = 50;
-        protected const double MaxEnergy = 20;
-        protected double Energy { get; set; }
 
         public Random RandomNumberGenerator { get; set; }
 

@@ -54,6 +54,7 @@
     <Compile Include="SimProperty.cs" />
     <Compile Include="SimState.cs" />
     <Compile Include="ZombieSim\EnergyProperty.cs" />
+    <Compile Include="ZombieSim\EnergyUseBehaviour.cs" />
     <Compile Include="ZombieSim\ZombieBehaviour.cs" />
     <Compile Include="ZombieSim\HumanBehaviour.cs" />
     <Compile Include="SimObject.cs" />

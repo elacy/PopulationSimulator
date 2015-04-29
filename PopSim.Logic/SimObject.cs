@@ -45,7 +45,15 @@ namespace PopSim.Logic
         }
         #endregion
 
+        public T GetProperty<T>() where T:SimProperty
+        {
+            return Properties.OfType<T>().FirstOrDefault();
+        }
 
+        public T GetBehaviour<T>() where T:Behaviour
+        {
+            return Behaviours.OfType<T>().FirstOrDefault();
+        }
 
         //Top Left
         #region Location Property 

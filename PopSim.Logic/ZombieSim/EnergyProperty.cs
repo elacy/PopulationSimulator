@@ -27,10 +27,19 @@ namespace PopSim.Logic.ZombieSim
             }
         }
 
-        public void ChangeEnergy(double amount)
+        private readonly object _energyLockObject = new object();
+
+        public void AddEnergy(double amount)
         {
-            Energy = Math.Min(_maxEnergy, Math.Max(Energy + amount, 0));
+            lock (_energyLockObject)
+            {
+                Energy = Math.Min(_maxEnergy, Math.Max(Energy + amount, 0));
+            }
         }
 
+        public void UseEnergy(double amount)
+        {
+            AddEnergy(-Math.Abs(amount));
+        }
     }
 }

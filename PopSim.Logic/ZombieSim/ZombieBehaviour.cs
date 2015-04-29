@@ -23,9 +23,6 @@ namespace PopSim.Logic.ZombieSim
 
         protected override void OnSimObjectUpdating(SimObject zombie, SimModel simModel, SimState simState)
         {
-            var magnitude = zombie.Velocity.VectorMagnitude();
-            Energy -= magnitude * simState.MillisecondsSinceLastUpdate / 1000.0;
-
             if (Prey != null && (!CanBeVictim(Prey) || zombie.Location.GetDistance(Prey.Location) > ViewDistance))
             {
                 if (CanBeVictim(Prey))
@@ -46,12 +43,13 @@ namespace PopSim.Logic.ZombieSim
                 Prey.Color = Colors.Green;
                 zombie.Velocity = zombie.Location.GetDirection(Prey.Location).ScalarMultiply(RunSpeed);
             }
-            if (Energy < 15)
+            var energyProp = zombie.GetProperty<EnergyProperty>();
+            if (energyProp.Energy < 15)
             {
                 zombie.Velocity = zombie.Velocity.UnitVector().ScalarMultiply(SlowSpeed);
                 zombie.Color = Colors.Indigo;
             }
-            else if (Energy <= 0)
+            else if (energyProp.Energy <= 0)
             {
                 zombie.Velocity = new Vector2(0, 0);
                 zombie.Color = Colors.Black;
@@ -78,7 +76,8 @@ namespace PopSim.Logic.ZombieSim
                         collidingObject.Behaviours.Remove(behaviour);
                         collidingObject.Behaviours.Add(new ZombieBehaviour(Random));
                         Prey = null;
-                        Energy = Math.Max(Energy + 10, MaxEnergy);
+                        var energyProp = sender.GetProperty<EnergyProperty>();
+                        energyProp.AddEnergy(10);
                     }
                 }
             }

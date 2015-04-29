@@ -43,6 +43,8 @@ namespace PopSim.Logic
             Width = width;
             Height = height;
 
+            const double MaxEnergy = 50;
+
             CreateBoundaryWalls();
 
             for (var i = 0; i < 100; i++)
@@ -61,6 +63,8 @@ namespace PopSim.Logic
                 {
                     actor.Behaviours.Add(new HumanBehaviour(_random));
                 }
+                actor.Properties.Add(new EnergyProperty(MaxEnergy, MaxEnergy));
+                actor.Behaviours.Add(new EnergyUseBehaviour());
                 SimObjects.Add(actor);
             }
         }
