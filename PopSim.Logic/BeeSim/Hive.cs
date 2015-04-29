@@ -3,27 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
 
-namespace PopSim.Logic
+namespace PopSim.Logic.BeeSim
 {
-    public class WallObject:SimObject
+    public class Hive:SimObject
     {
-        public WallObject(Vector2 location, Size2 size)
+        public Hive(Vector2 location, Size2 size)
         {
             Location = location;
             Size = size;
-            Color = Colors.Black;
         }
-
         public override bool CanHaveCollisions
         {
             get { return true; }
-        }
-
-        protected override void OnUpdate(SimModel simModel, SimState simState)
-        {
-            
         }
     }
 }

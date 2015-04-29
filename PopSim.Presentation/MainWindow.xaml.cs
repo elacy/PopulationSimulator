@@ -25,43 +25,29 @@ namespace PopSim.Presentation
     /// </summary>
     public partial class MainWindow : Window
     {
+        private static readonly double ScreenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
+        private static readonly double ScreenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
+
         public MainWindow()
         {
             InitializeComponent();
+        }
+        private void StartZombieSimulator(object sender, RoutedEventArgs e)
+        {
+            var gameState = new SimModel(new CollisionDetection(), new Random());
+            gameState.CreateZombiePopulation(ScreenWidth/2, ScreenHeight/2);
 
-            
+            var simulation = new SimulationRunner(gameState);
+            simulation.Start("Zombie Simulation");
         }
 
-        protected override void OnInitialized(EventArgs e)
+        private void StartBeeSimulator(object sender, RoutedEventArgs e)
         {
-            base.OnInitialized(e);
-            GameState = new GameState(new CollisionDetection(), new Random());
-            GameState.CreateInitialPopulation(800, 800);
-            UpdateTimer = new Timer(PerformUpdate, null, 0, 50);
-            Stopwatch = new Stopwatch();
-            DataContext = GameState;
-        }
+            var gameState = new SimModel(new CollisionDetection(), new Random());
+            gameState.CreateHiveAndFlower(ScreenWidth / 2, ScreenHeight / 2);
 
-        public Stopwatch Stopwatch { get; set; }
-
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            UpdateTimer.Dispose();
-            base.OnClosing(e);
-        }
-
-
-        public Timer UpdateTimer { get; set; }
-
-        public Timer DrawTimer { get; set; }
-
-        public GameState GameState { get; set; }
-
-
-        private void PerformUpdate(object state)
-        {
-            GameState.Update(Stopwatch.ElapsedMilliseconds);
-            Stopwatch.Restart();
+            var simulation = new SimulationRunner(gameState);
+            simulation.Start("Bee Simulation");
         }
     }
 }

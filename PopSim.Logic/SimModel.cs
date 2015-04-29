@@ -2,23 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using PopSim.Logic.BeeSim;
+using PopSim.Logic.ZombieSim;
+using PopSim.Wpf;
 
 namespace PopSim.Logic
 {
-    public class GameState
+    public class SimModel
     {
         private readonly CollisionDetection _collisionDetection;
         private readonly Random _random;
         public double Width { get; set; }
         public double Height { get; set; }
-        public ObservableCollection<SimObject> SimObjects { get; set; }
+        public ObservableList<SimObject> SimObjects { get; set; }
 
-        public GameState(CollisionDetection collisionDetection, Random random)
+        public SimModel(CollisionDetection collisionDetection, Random random)
         {
             _collisionDetection = collisionDetection;
             _random = random;
-            SimObjects = new ObservableCollection<SimObject>();
+            SimObjects = new ObservableList<SimObject>();
         }
 
         private const int WallSize = 2;
@@ -33,17 +37,13 @@ namespace PopSim.Logic
                 }
             }
         }
-
-        public void CreateInitialPopulation(double width, double height)
+        
+        public void CreateZombiePopulation(double width, double height)
         {
             Width = width;
             Height = height;
 
-            //Added four walls
-            SimObjects.Add(new WallObject(new Vector2(0, 0), new Size2(Width, WallSize)));
-            SimObjects.Add(new WallObject(new Vector2(0, 0), new Size2(WallSize, Height)));
-            SimObjects.Add(new WallObject(new Vector2(Width - WallSize, 0), new Size2(WallSize, Height)));
-            SimObjects.Add(new WallObject(new Vector2(0, Height - WallSize), new Size2(Width, WallSize)));
+            CreateBoundaryWalls();
 
             for (var i = 0; i < 100; i++)
             {
@@ -65,11 +65,37 @@ namespace PopSim.Logic
             }
         }
 
-        public void Update(long elapsedMilliseconds)
+        public void CreateHiveAndFlower(double width, double height)
         {
-            foreach (var simObject in SimObjects)
+            Width = width;
+            Height = height;
+
+            CreateBoundaryWalls();
+
+            var hive = new Hive(new Vector2(10, 10), new Size2(30, 30));
+            hive.Behaviours.Add(new HiveBehaviour(_random));
+            SimObjects.Add(hive);
+
+            
+            var flower = new Flower(new Vector2(Width - 60, Height -60), new Size2(47, 44));
+            SimObjects.Add(flower);
+        }
+
+        private void CreateBoundaryWalls()
+        {
+            //Added four walls
+            SimObjects.Add(new WallObject(new Vector2(0, 0), new Size2(Width, WallSize)));
+            SimObjects.Add(new WallObject(new Vector2(0, 0), new Size2(WallSize, Height)));
+            SimObjects.Add(new WallObject(new Vector2(Width - WallSize, 0), new Size2(WallSize, Height)));
+            SimObjects.Add(new WallObject(new Vector2(0, Height - WallSize), new Size2(Width, WallSize)));
+        }
+
+
+        public void Update(SimState simState)
+        {
+            foreach (var simObject in SimObjects.ToList())
             {
-                simObject.Update(this, elapsedMilliseconds);
+                simObject.Update(this, simState);
             }
         }
     }

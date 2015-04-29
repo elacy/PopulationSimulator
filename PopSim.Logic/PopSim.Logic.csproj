@@ -41,13 +41,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actor.cs" />
+    <Compile Include="BeeSim\BeeBehaviour.cs" />
+    <Compile Include="BeeSim\Flower.cs" />
+    <Compile Include="BeeSim\Hive.cs" />
+    <Compile Include="BeeSim\HiveBehaviour.cs" />
     <Compile Include="CollisionDetection.cs" />
-    <Compile Include="GameState.cs" />
+    <Compile Include="GameCollisionEventArgs.cs" />
+    <Compile Include="SimModel.cs" />
     <Compile Include="GameStateUpdateEventArgs.cs" />
     <Compile Include="Behaviour.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="ZombieBehaviour.cs" />
-    <Compile Include="HumanBehaviour.cs" />
+    <Compile Include="SimProperty.cs" />
+    <Compile Include="SimState.cs" />
+    <Compile Include="ZombieSim\EnergyProperty.cs" />
+    <Compile Include="ZombieSim\ZombieBehaviour.cs" />
+    <Compile Include="ZombieSim\HumanBehaviour.cs" />
     <Compile Include="SimObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Size2.cs" />
@@ -57,7 +65,12 @@
     <Compile Include="_Mixins\NotifyCollectionChangedEventArgsMixin.cs" />
     <Compile Include="_Mixins\RandomMixIns.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\PopSim.Wpf\PopSim.Wpf.csproj">
+      <Project>{33B4FF33-5766-4C37-9C9C-C21616E7644B}</Project>
+      <Name>PopSim.Wpf</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

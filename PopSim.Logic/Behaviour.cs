@@ -19,20 +19,20 @@ namespace PopSim.Logic
 
         private void SimObjectOnCollision(object sender, GameCollisionEventArgs e)
         {
-            OnSimObjectCollision((SimObject)sender,e.GameState,e.ElapsedMilliseconds,e.CollidingObjects);
+            OnSimObjectCollision((SimObject)sender,e.SimModel,e.SimState,e.CollidingObjects);
         }
 
-        protected virtual void OnSimObjectCollision(SimObject sender, GameState gameState, long elapsedMilliseconds, List<SimObject> collidingObjects)
+        protected virtual void OnSimObjectCollision(SimObject sender, SimModel simModel, SimState simState, List<SimObject> collidingObjects)
         {
             
         }
 
         private void SimObjectOnUpdating(object sender, GameStateUpdateEventArgs e)
         {
-            OnSimObjectUpdating((SimObject)sender, e.GameState, e.ElapsedMilliseconds);
+            OnSimObjectUpdating((SimObject)sender, e.SimModel, e.SimState);
         }
 
-        protected virtual void OnSimObjectUpdating(SimObject simObject, GameState gameState, long elapsedMilliseconds)
+        protected virtual void OnSimObjectUpdating(SimObject simObject, SimModel simModel, SimState simState)
         {
             
         }

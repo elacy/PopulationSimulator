@@ -22,7 +22,11 @@ namespace PopSim.Logic
             Behaviours = new ObservableCollection<Behaviour>();
             Behaviours.CollectionChanged += OnBehavioursCollectionChanged;
             Velocity = new Vector2(0,0);
+            Properties = new ObservableCollection<SimProperty>();
+
         }
+
+        public ObservableCollection<SimProperty> Properties { get; set; }
 
         #region Behaviours
         private void OnBehavioursCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -40,6 +44,8 @@ namespace PopSim.Logic
             behaviour.Attach(this);
         }
         #endregion
+
+
 
         //Top Left
         #region Location Property 
@@ -100,33 +106,33 @@ namespace PopSim.Logic
 
         public event EventHandler<GameCollisionEventArgs> Collision;
 
-        protected void RaiseCollision(GameState gameState, long elapsedMilliseconds, List<SimObject> collidingObjects )
+        protected void RaiseCollision(SimModel simModel, SimState simState, List<SimObject> collidingObjects)
         {
-            Collision.Raise(this,new GameCollisionEventArgs(gameState,elapsedMilliseconds,collidingObjects));
+            Collision.Raise(this, new GameCollisionEventArgs(simModel, simState, collidingObjects));
         }
 
-        public void Update(GameState gameState, long elapsedMilliseconds)
+        public void Update(SimModel simModel, SimState simState)
         {
-            Updating.Raise(this, new GameStateUpdateEventArgs(gameState, elapsedMilliseconds));
-            OnUpdate(gameState, elapsedMilliseconds);
-            TryMove(gameState, elapsedMilliseconds, Location.Add(Velocity));
+            Updating.Raise(this, new GameStateUpdateEventArgs(simModel, simState));
+            OnUpdate(simModel, simState);
+            TryMove(simModel, simState, Location.Add(Velocity));
         }
 
 
-        protected virtual void OnUpdate(GameState gameState, long elapsedMilliseconds)
+        protected virtual void OnUpdate(SimModel simModel, SimState simState)
         {
             
         }
 
-        protected void TryMove(GameState gameState, long elapsedMilliseconds, Vector2 newLocation)
+        protected void TryMove(SimModel simModel, SimState simState, Vector2 newLocation)
         {
             var oldLocation = Location;
             Location = newLocation;
-            var collidingObjects = gameState.DetectCollisions(this).ToList();
+            var collidingObjects = simModel.DetectCollisions(this).ToList();
             if (collidingObjects.Count > 0)
             {
                 Location = oldLocation;
-                RaiseCollision(gameState,elapsedMilliseconds,collidingObjects);
+                RaiseCollision(simModel, simState, collidingObjects);
             }
         }
 

@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace PopSim.Logic
+namespace PopSim.Logic.ZombieSim
 {
     public class ZombieBehaviour : HumanBehaviour
     {
-
         public ZombieBehaviour(Random random)
             : base(random)
         {
@@ -17,24 +14,19 @@ namespace PopSim.Logic
 
         private SimObject Prey { get; set; }
 
-        const double SlowSpeed = 0.1;
-        const double Speed = 0.3;
-
-        const double HuntingSpeed = 0.7;
-        private const double ChaseDistance = 50;
-
         protected override void OnAttached(SimObject simObject)
         {
             GiveRandomDirection(simObject, Speed);
             simObject.Color = Colors.Red;
         }
 
-        protected override void OnSimObjectUpdating(SimObject zombie, GameState gameState, long elapsedMilliseconds)
+
+        protected override void OnSimObjectUpdating(SimObject zombie, SimModel simModel, SimState simState)
         {
             var magnitude = zombie.Velocity.VectorMagnitude();
-            Energy -= magnitude * elapsedMilliseconds / 1000.0;
+            Energy -= magnitude * simState.MillisecondsSinceLastUpdate / 1000.0;
 
-            if (Prey != null && (!CanBeVictim(Prey) || zombie.Location.GetDistance(Prey.Location) > ChaseDistance))
+            if (Prey != null && (!CanBeVictim(Prey) || zombie.Location.GetDistance(Prey.Location) > ViewDistance))
             {
                 if (CanBeVictim(Prey))
                 {
@@ -45,18 +37,14 @@ namespace PopSim.Logic
             }
             if (Prey == null)
             {
-                Prey = gameState.SimObjects
+                Prey = GetObjectsInView(simModel,zombie)
                     .Where(CanBeVictim)
-                    .Select(sim => new { sim, Distance = zombie.Location.GetDistance(sim.Location) })
-                    .Where(x => x.Distance < ChaseDistance)
-                    .OrderBy(x => x.Distance)
-                    .Select(x => x.sim)
                     .FirstOrDefault();
             }
             if (Prey != null)
             {
                 Prey.Color = Colors.Green;
-                zombie.Velocity = zombie.Location.GetDirection(Prey.Location).ScalarMultiply(HuntingSpeed);
+                zombie.Velocity = zombie.Location.GetDirection(Prey.Location).ScalarMultiply(RunSpeed);
             }
             if (Energy < 15)
             {
@@ -79,7 +67,7 @@ namespace PopSim.Logic
             return simObject.Behaviours.Any(x => !(x is ZombieBehaviour));
         }
 
-        protected override void OnSimObjectCollision(SimObject sender, GameState gameState, long elapsedMilliseconds, List<SimObject> collidingObjects)
+        protected override void OnSimObjectCollision(SimObject sender, SimModel simModel, SimState simState, List<SimObject> collidingObjects)
         {
             foreach (var collidingObject in collidingObjects)
             {
