@@ -20,87 +20,77 @@ namespace PopSim.Logic.BeeSim
 
         protected const double Speed = 2;
 
-        private const double MaxTransportDistance = 50;
-
         private const double MaxViewDistance = 50;
-
-        private Vector2 NectarPickupLocation { get; set; }
-        private Vector2 NectarDropLocation { get; set; }
-
-        private bool _nectar = false;
-        private bool _dancing = false;
-
-        private readonly object _nectarLock = new object();
-
-        public bool GetNectar()
-        {
-            lock (_nectarLock)
-            {
-                if (!_nectar) 
-                    return false;
-
-                _nectar = false;
-                _dancing = false;
-                return true;
-            }
-        }
-
-        private void NectarReceived(SimObject simObject)
-        {
-            lock (_nectarLock)
-            {
-                if (!_nectar)
-                {
-                    NectarPickupLocation = simObject.Location;
-                    simObject.Velocity = simObject.Location.GetDirection(_hive.Location).ScalarMultiply(Speed);
-                    simObject.Color = Colors.Green;
-                    _nectar = true;
-                }
-            }
-        }
 
         protected override void OnAttached(SimObject simObject)
         {
+            simObject.RegisterPropertyUpdateAction<NectarProperty>(NectarUpdated);
+            simObject.RegisterPropertyUpdateAction<EnergyProperty>(EnergyUpdated);
             simObject.Color = Colors.Black;
             GiveRandomDirection(simObject,Speed);
+            simObject.Properties.Add(new EnergyProperty(30,30));
+        }
+
+        private bool _halt;
+        private bool _canHuntNectar;
+
+        private void EnergyUpdated(EnergyProperty prop, SimObject simObject)
+        {
+            if (prop.Energy < 1)
+            {
+                simObject.Velocity = new Vector2(0, 0);
+                simObject.Color = Colors.Red;
+                _halt = true;
+                _canHuntNectar = false;
+            }
+            else if (prop.Energy < 15)
+            {
+                _canHuntNectar = false;
+            }
+            else
+            {
+                _halt = true;
+                _canHuntNectar = true;
+            }
+        }
+
+        private void NectarUpdated(NectarProperty nectarProperty, SimObject simObject)
+        {
+            if (nectarProperty.HasNectar)
+            {
+                simObject.Color = Colors.Green;
+                simObject.Velocity = simObject.Location.GetDirection(_hive.Location).ScalarMultiply(Speed);
+            }
+            else if(!nectarProperty.HasNectar)
+            {
+                GiveRandomDirection(simObject, Speed);
+            }
         }
 
         protected override void OnSimObjectUpdating(SimObject simObject, SimModel simModel, SimState simState)
         {
-            if (_dancing)
+            if (_halt)
             {
-                simObject.Color = Colors.Blue;
+                return;
             }
-            else if (_nectar)
-            {
-                if (simObject.Location.GetDistance(NectarPickupLocation) > MaxTransportDistance)
-                {
-                    _dancing = true;
-                    simObject.Velocity = new Vector2(0,0);
-                }
-            }
-            else
+
+            var bouncedRecently = simState.MillisecondsSinceSimStart - _lastBounce < 2000;
+            if (!bouncedRecently && _canHuntNectar)
             {
                 simObject.Color = Colors.Black;
-                var dancingBee = simModel.SimObjects.OfType<Actor>()
-                    .FirstOrDefault(x => x.Color == Colors.Blue && x.Location.GetDistance(simObject.Location) < MaxViewDistance);
-                if (dancingBee != null)
+                var closestStaticObjectWithNectar = simModel.SimObjects
+                    .Where(x => x.Location.GetDistance(simObject.Location) < MaxViewDistance)
+                    .Select(x => new {SimObject = x, Nectar = x.GetProperty<NectarProperty>()})
+                    .Where(x => x.Nectar != null && x.Nectar.HasNectar)
+                    .Select(x => x.SimObject)
+                    .FirstOrDefault();
+
+                if (closestStaticObjectWithNectar != null)
                 {
-                    simObject.Velocity = simObject.Location.GetDirection(dancingBee.Location).ScalarMultiply(Speed);
-                }
-                if (NectarPickupLocation != null)
-                {
-                    if (NectarPickupLocation.GetDistance(simObject.Location) < 1)
-                    {
-                        simObject.Velocity = new Vector2(0, 0);
-                    }
-                    else
-                    {
-                        simObject.Velocity = simObject.Location.GetDirection(NectarPickupLocation).ScalarMultiply(Speed);
-                    }
+                    simObject.Velocity = simObject.Location.GetDirection(closestStaticObjectWithNectar.Location).ScalarMultiply(Speed);
                 }
             }
-            
+
         }
         protected void GiveRandomDirection(SimObject actor, double speed)
         {
@@ -111,22 +101,10 @@ namespace PopSim.Logic.BeeSim
 
         protected override void OnSimObjectCollision(SimObject sender, SimModel simModel, SimState simState, List<SimObject> collidingObjects)
         {
-            var flower = collidingObjects.OfType<Flower>().FirstOrDefault();
-            if (flower != null)
-            {
-                NectarReceived(sender);
-            }
-            else
-            {
-                var bees = collidingObjects.OfType<Actor>().SelectMany(x => x.Behaviours.OfType<BeeBehaviour>());
-                if (bees.Any(bee => bee.GetNectar()))
-                {
-                    NectarReceived(sender);
-                }
-            }
-            
-
+            _lastBounce = simState.MillisecondsSinceSimStart;
             GiveRandomDirection(sender, Speed);
         }
+
+        private long _lastBounce = 0;
     }
 }

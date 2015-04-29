@@ -78,10 +78,12 @@ namespace PopSim.Logic
 
             var hive = new Hive(new Vector2(10, 10), new Size2(30, 30));
             hive.Behaviours.Add(new HiveBehaviour(_random));
+            hive.Behaviours.Add(new NectarCarrierBehaviour());
             SimObjects.Add(hive);
 
             
             var flower = new Flower(new Vector2(Width - 60, Height -60), new Size2(47, 44));
+            flower.Behaviours.Add(new FlowerBehaviour());
             SimObjects.Add(flower);
         }
 
@@ -97,10 +99,7 @@ namespace PopSim.Logic
 
         public void Update(SimState simState)
         {
-            foreach (var simObject in SimObjects.ToList())
-            {
-                simObject.Update(this, simState);
-            }
+            Parallel.ForEach(SimObjects, simObject => simObject.Update(this, simState));
         }
     }
 }

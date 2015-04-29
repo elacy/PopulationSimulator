@@ -23,10 +23,67 @@ namespace PopSim.Logic
             Behaviours.CollectionChanged += OnBehavioursCollectionChanged;
             Velocity = new Vector2(0,0);
             Properties = new ObservableCollection<SimProperty>();
+            Properties.CollectionChanged += OnPropertyCollectionChanged;
 
+        }
+        #region Properties
+        private void OnPropertyCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            e.Handle<SimProperty>(AddProperty,RemoveProperty);
+        }
+
+        private void RemoveProperty(SimProperty simProp)
+        {
+            simProp.PropertyChanged -= SimPropertyChanged;
+        }
+
+        private void AddProperty(SimProperty simProp)
+        {
+            simProp.PropertyChanged += SimPropertyChanged;
+            RaiseUpdate(simProp);
+        }
+
+        private void SimPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var simProp = (SimProperty) sender;
+            RaiseUpdate(simProp);
         }
 
         public ObservableCollection<SimProperty> Properties { get; set; }
+
+        private void RaiseUpdate(SimProperty simProp)
+        {
+            var actions = Enumerable.Empty<Action<SimProperty>>();
+            lock (_propertyUpdateEvents)
+            {
+                if (_propertyUpdateEvents.ContainsKey(simProp.GetType()))
+                {
+                    actions = _propertyUpdateEvents[simProp.GetType()];
+                }
+            }
+            foreach (var action in actions)
+            {
+                action(simProp);
+            }
+        }
+
+        public void RegisterPropertyUpdateAction<T>(Action<T, SimObject> updateAction) where T:SimProperty
+        {
+            lock(_propertyUpdateEvents)
+            {
+                if (!_propertyUpdateEvents.ContainsKey(typeof (T)))
+                {
+                    _propertyUpdateEvents.Add(typeof(T),new List<Action<SimProperty>>());
+                }
+                Action<SimProperty> action = simProp => updateAction((T) simProp,this);
+                _propertyUpdateEvents[typeof(T)].Add(action);
+            }
+            
+        }
+
+        readonly IDictionary<Type, List<Action<SimProperty>>> _propertyUpdateEvents = new Dictionary<Type, List<Action<SimProperty>>>();
+
+        #endregion
 
         #region Behaviours
         private void OnBehavioursCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -44,6 +101,8 @@ namespace PopSim.Logic
             behaviour.Attach(this);
         }
         #endregion
+
+        
 
         public T GetProperty<T>() where T:SimProperty
         {

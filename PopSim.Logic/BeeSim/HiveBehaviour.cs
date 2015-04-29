@@ -23,6 +23,12 @@ namespace PopSim.Logic.BeeSim
         {
             Bees = new List<SimObject>();
             SpawnLocation = simObject.Location.Add(new Vector2(simObject.Size.Width/2, simObject.Size.Height + 5));
+            simObject.RegisterPropertyUpdateAction<NectarProperty>(NectarUpdated);
+        }
+
+        private void NectarUpdated(NectarProperty nectarProperty, SimObject simObject)
+        {
+            nectarProperty.DrainNectar();
         }
 
         protected override void OnSimObjectUpdating(SimObject simObject, SimModel simModel, SimState simState)
@@ -35,6 +41,7 @@ namespace PopSim.Logic.BeeSim
                     return;
                 }
                 bee.Behaviours.Add(new BeeBehaviour(_random,simObject));
+                bee.Behaviours.Add(new NectarCarrierBehaviour());
                 Bees.Add(bee);
                 simModel.SimObjects.Add(bee);
             }

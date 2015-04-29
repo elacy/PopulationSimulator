@@ -43,8 +43,11 @@
     <Compile Include="Actor.cs" />
     <Compile Include="BeeSim\BeeBehaviour.cs" />
     <Compile Include="BeeSim\Flower.cs" />
+    <Compile Include="BeeSim\FlowerBehaviour.cs" />
     <Compile Include="BeeSim\Hive.cs" />
     <Compile Include="BeeSim\HiveBehaviour.cs" />
+    <Compile Include="BeeSim\NectarCarrierBehaviour.cs" />
+    <Compile Include="BeeSim\NectarProperty.cs" />
     <Compile Include="CollisionDetection.cs" />
     <Compile Include="GameCollisionEventArgs.cs" />
     <Compile Include="SimModel.cs" />
@@ -53,7 +56,7 @@
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="SimProperty.cs" />
     <Compile Include="SimState.cs" />
-    <Compile Include="ZombieSim\EnergyProperty.cs" />
+    <Compile Include="EnergyProperty.cs" />
     <Compile Include="ZombieSim\EnergyUseBehaviour.cs" />
     <Compile Include="ZombieSim\ZombieBehaviour.cs" />
     <Compile Include="ZombieSim\HumanBehaviour.cs" />
