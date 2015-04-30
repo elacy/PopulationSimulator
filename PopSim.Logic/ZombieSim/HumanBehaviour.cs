@@ -25,7 +25,7 @@ namespace PopSim.Logic.ZombieSim
         {
             return simModel.SimObjects
                 .Select(sim => new {sim, Distance = simObject.Location.GetDistance(sim.Location)})
-                .Where(x => x.Distance < ViewDistance)
+                .Where(x => x.sim != simObject &&  x.Distance < ViewDistance)
                 .OrderBy(x => x.Distance)
                 .Select(x => x.sim);
         }

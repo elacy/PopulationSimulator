@@ -18,46 +18,71 @@ namespace PopSim.Logic.ZombieSim
         {
             GiveRandomDirection(simObject, Speed);
             simObject.Color = Colors.Red;
+            simObject.RegisterPropertyUpdateAction<EnergyProperty>(EnergyUpdated);
+        }
+
+        private double _speed = Speed;
+
+        private void UpdateSpeed(double speed, SimObject simObject)
+        {
+            simObject.Velocity = simObject.Velocity.UnitVector().ScalarMultiply(speed);
+        }
+
+        private void SetDestination(Vector2 vector2, SimObject simObject)
+        {
+            var speed = simObject.Velocity.VectorMagnitude();
+            simObject.Velocity = simObject.Location.GetDirection(vector2).ScalarMultiply(speed);
         }
 
 
-        protected override void OnSimObjectUpdating(SimObject zombie, SimModel simModel, SimState simState)
+        private void EnergyUpdated(EnergyProperty prop, SimObject simObject)
         {
-            if (Prey != null && (!CanBeVictim(Prey) || zombie.Location.GetDistance(Prey.Location) > ViewDistance))
+            if (prop.Energy < 15)
+            {
+                UpdateSpeed(SlowSpeed, simObject);
+                simObject.Color = Colors.Indigo;
+            }
+            else if (prop.Energy <= 0)
+            {
+                UpdateSpeed(0, simObject);
+                simObject.Color = Colors.Black;
+            }
+            else
+            {
+                UpdateSpeed(Speed, simObject);
+                simObject.Color = Colors.Red;
+            }
+        }
+
+
+        protected override void OnSimObjectUpdating(SimObject simObject, SimModel simModel, SimState simState)
+        {
+            if (Prey != null && (!CanBeVictim(Prey) || simObject.Location.GetDistance(Prey.Location) > ViewDistance))
             {
                 if (CanBeVictim(Prey))
                 {
                     Prey.Color = Colors.Black;
                 }
                 Prey = null;
-                GiveRandomDirection(zombie, Speed);
+                GiveRandomDirection(simObject, simObject.Velocity.VectorMagnitude());
             }
             if (Prey == null)
             {
-                Prey = GetObjectsInView(simModel,zombie)
+                Prey = GetObjectsInView(simModel, simObject)
                     .Where(CanBeVictim)
                     .FirstOrDefault();
             }
             if (Prey != null)
             {
                 Prey.Color = Colors.Green;
-                zombie.Velocity = zombie.Location.GetDirection(Prey.Location).ScalarMultiply(RunSpeed);
+                SetDestination(Prey.Location,simObject);
+                var energy = simObject.GetProperty<EnergyProperty>();
+                if (energy != null && energy.Energy > 15)
+                {
+                    UpdateSpeed(RunSpeed,simObject);
+                }
             }
-            var energyProp = zombie.GetProperty<EnergyProperty>();
-            if (energyProp.Energy < 15)
-            {
-                zombie.Velocity = zombie.Velocity.UnitVector().ScalarMultiply(SlowSpeed);
-                zombie.Color = Colors.Indigo;
-            }
-            else if (energyProp.Energy <= 0)
-            {
-                zombie.Velocity = new Vector2(0, 0);
-                zombie.Color = Colors.Black;
-            }
-            else
-            {
-                zombie.Color = Colors.Red;
-            }
+            
         }
 
         private static bool CanBeVictim(SimObject simObject)
