@@ -16,20 +16,45 @@ namespace PopSim.Logic
         private readonly Random _random;
         public double Width { get; set; }
         public double Height { get; set; }
-        public ObservableList<SimObject> SimObjects { get; set; }
+        private readonly ObservableList<SimObject> _simObjects;
 
+        public IEnumerable<SimObject> SimObjects { get { return _simObjects; } }
+
+        public void AddSimObject(SimObject simObject)
+        {
+            lock (_simObjects)
+            {
+                _simObjects.Add(simObject);
+            }
+        }
+
+        public void RemoveSimObject(SimObject simObject)
+        {
+            lock (_simObjects)
+            {
+                _simObjects.Remove(simObject);
+            }
+        }
+
+        public IEnumerable<SimObject> GetSimObjectsCopy()
+        {
+            lock (_simObjects)
+            {
+                return _simObjects.ToList();
+            }
+        } 
         public SimModel(CollisionDetection collisionDetection, Random random)
         {
             _collisionDetection = collisionDetection;
             _random = random;
-            SimObjects = new ObservableList<SimObject>();
+            _simObjects = new ObservableList<SimObject>();
         }
 
         private const int WallSize = 2;
 
         public IEnumerable<SimObject> DetectCollisions(SimObject collidingObject)
         {
-            foreach (var simObject in SimObjects)
+            foreach (var simObject in GetSimObjectsCopy())
             {
                 if (collidingObject != simObject && _collisionDetection.IsCollision(collidingObject, simObject))
                 {
@@ -65,7 +90,7 @@ namespace PopSim.Logic
                 }
                 actor.Properties.Add(new EnergyProperty(MaxEnergy, MaxEnergy));
                 actor.Behaviours.Add(new EnergyUseBehaviour());
-                SimObjects.Add(actor);
+                AddSimObject(actor);
             }
         }
 
@@ -79,27 +104,27 @@ namespace PopSim.Logic
             var hive = new Hive(new Vector2(10, 10), new Size2(30, 30));
             hive.Behaviours.Add(new HiveBehaviour(_random));
             hive.Behaviours.Add(new NectarCarrierBehaviour());
-            SimObjects.Add(hive);
+            AddSimObject(hive);
 
             
             var flower = new Flower(new Vector2(Width - 60, Height -60), new Size2(47, 44));
             flower.Behaviours.Add(new FlowerBehaviour());
-            SimObjects.Add(flower);
+            AddSimObject(flower);
         }
 
         private void CreateBoundaryWalls()
         {
             //Added four walls
-            SimObjects.Add(new WallObject(new Vector2(0, 0), new Size2(Width, WallSize)));
-            SimObjects.Add(new WallObject(new Vector2(0, 0), new Size2(WallSize, Height)));
-            SimObjects.Add(new WallObject(new Vector2(Width - WallSize, 0), new Size2(WallSize, Height)));
-            SimObjects.Add(new WallObject(new Vector2(0, Height - WallSize), new Size2(Width, WallSize)));
+            AddSimObject(new WallObject(new Vector2(0, 0), new Size2(Width, WallSize)));
+            AddSimObject(new WallObject(new Vector2(0, 0), new Size2(WallSize, Height)));
+            AddSimObject(new WallObject(new Vector2(Width - WallSize, 0), new Size2(WallSize, Height)));
+            AddSimObject(new WallObject(new Vector2(0, Height - WallSize), new Size2(Width, WallSize)));
         }
 
 
         public void Update(SimState simState)
         {
-            Parallel.ForEach(SimObjects, simObject => simObject.Update(this, simState));
+            Parallel.ForEach(GetSimObjectsCopy(), simObject => simObject.Update(this, simState));
         }
     }
 }

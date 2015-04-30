@@ -30,12 +30,7 @@ namespace PopSim.Logic
 
         public double GetDistance(Vector2 vector2)
         {
-            return Math.Sqrt(Squared(vector2.X - X) + Squared(vector2.Y - Y));
-        }
-
-        private static double Squared(double value)
-        {
-            return Math.Pow(value, 2);
+            return new Vector2(vector2.X - X, vector2.Y - Y).VectorMagnitude();
         }
         
         public double AngleBetween(Vector2 vector2)
@@ -64,7 +59,8 @@ namespace PopSim.Logic
         
         public Vector2 UnitVector()
         {
-            return new Vector2(X/VectorMagnitude(), Y/VectorMagnitude());
+            var magnitude = VectorMagnitude();
+            return new Vector2(X / magnitude, Y / magnitude);
         }
     }
 }

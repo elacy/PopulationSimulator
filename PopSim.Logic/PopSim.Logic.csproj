@@ -50,6 +50,7 @@
     <Compile Include="BeeSim\NectarProperty.cs" />
     <Compile Include="CollisionDetection.cs" />
     <Compile Include="GameCollisionEventArgs.cs" />
+    <Compile Include="LastBounceProperty.cs" />
     <Compile Include="SimModel.cs" />
     <Compile Include="GameStateUpdateEventArgs.cs" />
     <Compile Include="Behaviour.cs" />

@@ -28,7 +28,11 @@ namespace PopSim.Logic.BeeSim
 
         private void NectarUpdated(NectarProperty nectarProperty, SimObject simObject)
         {
-            nectarProperty.DrainNectar();
+            if (nectarProperty.HasNectar)
+            {
+                Console.WriteLine("Hive got nectar!!!");
+                nectarProperty.DrainNectar();
+            }
         }
 
         protected override void OnSimObjectUpdating(SimObject simObject, SimModel simModel, SimState simState)
@@ -43,7 +47,7 @@ namespace PopSim.Logic.BeeSim
                 bee.Behaviours.Add(new BeeBehaviour(_random,simObject));
                 bee.Behaviours.Add(new NectarCarrierBehaviour());
                 Bees.Add(bee);
-                simModel.SimObjects.Add(bee);
+                simModel.AddSimObject(bee);
             }
         }
     }

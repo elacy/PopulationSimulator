@@ -49,7 +49,7 @@ namespace PopSim.Logic.BeeSim
             }
             else
             {
-                _halt = true;
+                _halt = false;
                 _canHuntNectar = true;
             }
         }
@@ -64,6 +64,7 @@ namespace PopSim.Logic.BeeSim
             else if(!nectarProperty.HasNectar)
             {
                 GiveRandomDirection(simObject, Speed);
+                simObject.Color = Colors.Black;
             }
         }
 
@@ -78,8 +79,8 @@ namespace PopSim.Logic.BeeSim
             if (!bouncedRecently && _canHuntNectar)
             {
                 simObject.Color = Colors.Black;
-                var closestStaticObjectWithNectar = simModel.SimObjects
-                    .Where(x => x.Location.GetDistance(simObject.Location) < MaxViewDistance)
+                var closestStaticObjectWithNectar = simModel.GetSimObjectsCopy()
+                    .Where(x => x.Velocity.IsZero && x.Location.GetDistance(simObject.Location) < MaxViewDistance)
                     .Select(x => new {SimObject = x, Nectar = x.GetProperty<NectarProperty>()})
                     .Where(x => x.Nectar != null && x.Nectar.HasNectar)
                     .Select(x => x.SimObject)
